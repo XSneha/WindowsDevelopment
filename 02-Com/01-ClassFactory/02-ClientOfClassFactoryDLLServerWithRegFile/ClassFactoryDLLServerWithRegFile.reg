@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\CLSID\{EA3D3E04-2F1B-4E54-8E8A-871BE06D067B}]
+@="SCS : My Class Factory DLL Server"
+[HKEY_CLASSES_ROOT\CLSID\{EA3D3E04-2F1B-4E54-8E8A-871BE06D067B}\InprocServer32]
+@="C:\\Windows\\System32\\ClassFactoryDLLServerWithRegFile.dll"
