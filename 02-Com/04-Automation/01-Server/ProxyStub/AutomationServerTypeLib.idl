@@ -1,0 +1,44 @@
+import "unknwn.idl";
+//MyMath Interface 
+//Interface definition block 
+//1. attribute block 
+[
+	object,
+	uuid(<guid - striguised - form>), //from Automation Server.h -> IID_MyMath
+	helpstring("This is IMyMath Interface decleration"), //Tools -> oleComViewer
+	pointer_default(unique),
+	dual,//
+	oleautomation//oleautomation
+]
+//2. decleration block
+interface IMyMath : IDispatch 
+{
+	import "oaidl.idl";// oa : OLE automation
+	HRESULT __stdcall SumOfTwoIntegers([in] int, [in] int, [out,retval]int*);
+	HRESULT __stdcall SubtractionOfTwoIntegers([in] int,[in] int,[out,retval] int*);
+};
+
+//Type library definition block
+//1.attribute block
+[
+	uuid(<uuid-libID_Automation - Server>),
+	version(1.0),//major version number. minor version number -> LoadRegTypeLib 2nd and 3rd parameter
+	helpstring("This is automation server Type Libaray")
+]
+//2.decleration block
+library AutomationServerTypeLib
+{
+	importlib("stdole32.tlb");
+	//component code
+	//Coclass definition block
+	//1.attribute block of Coclass definition block
+	[
+		uuid(<cls - id - stringused - commented>), //CLSID of MyMath component
+		helpstring("MyMath Component's type libarary")
+	]
+	//2.decleration block of Coclass definition block 
+	coclass CMyMath
+	{
+		[default] interface IMyMath;
+	};
+};
