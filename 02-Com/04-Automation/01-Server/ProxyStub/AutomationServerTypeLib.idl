@@ -4,7 +4,7 @@ import "unknwn.idl";
 //1. attribute block 
 [
 	object,
-	uuid(<guid - striguised - form>), //from Automation Server.h -> IID_MyMath
+	uuid(6641FCB9-5D50-429E-9967-AAD944C0F5BD), //from Automation Server.h -> IID_MyMath
 	helpstring("This is IMyMath Interface decleration"), //Tools -> oleComViewer
 	pointer_default(unique),
 	dual,//
@@ -21,7 +21,7 @@ interface IMyMath : IDispatch
 //Type library definition block
 //1.attribute block
 [
-	uuid(<uuid-libID_Automation - Server>),
+	uuid(EA3D3E04-2F1B-4E54-8E8A-871BE06D067B),
 	version(1.0),//major version number. minor version number -> LoadRegTypeLib 2nd and 3rd parameter
 	helpstring("This is automation server Type Libaray")
 ]
@@ -33,7 +33,7 @@ library AutomationServerTypeLib
 	//Coclass definition block
 	//1.attribute block of Coclass definition block
 	[
-		uuid(<cls - id - stringused - commented>), //CLSID of MyMath component
+		uuid(94248ECA-86B3-4A90-9DAB-E969BE8B62A8), //CLSID of MyMath component
 		helpstring("MyMath Component's type libarary")
 	]
 	//2.decleration block of Coclass definition block 

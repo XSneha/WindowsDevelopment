@@ -1,6 +1,7 @@
 //Visula studio 64bit cmd prompt
-//cl.exe /c /eHsc /D UNICODE AutomationServer.cpp
-//link.exe AutomationServer.obj /Dll /Def AutomationServer.def User32.lib OLE32.lib OLEOth32.lib /SUBSYSTEM WINDOWS
+// cd C:\WinDev2022\02-Com\04-Automation\01-Server
+//cl.exe /c /EHsc /D UNICODE AutomationServer.cpp
+//link.exe AutomationServer.obj /Dll /Def:AutomationServer.def User32.lib OLE32.lib OLEAut32.lib Advapi32.lib /SUBSYSTEM:WINDOWS /MACHINE:X64
 
 
 //header files
@@ -9,11 +10,12 @@
 #include"AutomationServer.h"
 
 //coclass decleration
-class CMyMath : public IMyMath 
+class CMyMath :public IMyMath 
 {
 private:
 	long m_CRef;
 	ITypeInfo* m_pITypeInfo = NULL;
+
 public:
 	//constructor
 	CMyMath(void);
@@ -70,8 +72,8 @@ HMODULE ghModule = NULL;
 long glNumberOfActiveComponents = 0;	// number of active components
 long glNumberOfServerLocks = 0;			// number of locks on this DLL
 										// {}
-
-const GUID LIBID_AutomationServer = {<uuid-libID_Automation-Server>}; //<uuid-libID_Automation-Server>
+// {EA3D3E04-2F1B-4E54-8E8A-871BE06D067B}
+const GUID LIBID_AutomationServer = {0xea3d3e04, 0x2f1b, 0x4e54, 0x8e, 0x8a, 0x87, 0x1b, 0xe0, 0x6d, 0x6, 0x7b }; // TODO : change later  <uuid-libID_Automation-Server>
 
 //DLLMain
 BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID Reserved)
@@ -86,30 +88,30 @@ BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID Reserved)
 	return (TRUE);
 }
 //Implemenation of CMyMath'c cosnstructor method
-CMYMath::CMyMath(void)
+CMyMath::CMyMath(void)
 {
-	m_cRef = 1; //hardcoded initialization to anticipate possible failure of QueryInterface()
+	m_CRef = 1; //hardcoded initialization to anticipate possible failure of QueryInterface()
 	InterlockedIncrement(&glNumberOfActiveComponents); //incrementing the global counter
-	m_pITypeInfo = null;
+	m_pITypeInfo = NULL;
 }
 
 //destructor
-CMYMath::~CMyMath(void)
+CMyMath::~CMyMath(void)
 {
 	InterlockedDecrement(&glNumberOfActiveComponents); //decrementing the global counter
 	if (m_pITypeInfo) {
-		m_pITypeInfo->release();
-		m_pITypeInfo = null;
+		m_pITypeInfo->Release();
+		m_pITypeInfo = NULL;
 	}
 }
 
 //Implementation of CMyMath's IUnknow's Method
 HRESULT CMyMath::QueryInterface(REFIID riid,void **ppv) {
-	if (riif == IID_IUnknown)
+	if (riid == IID_IUnknown)
 		*ppv = static_cast<IMyMath*>(this);
-	else if (rrid == IID_IDispatch)
+	else if (riid == IID_IDispatch)
 		*ppv = static_cast<IMyMath*>(this);
-	else if (rrid == IID_IMyMath)
+	else if (riid == IID_IMyMath)
 		*ppv = static_cast<IMyMath*>(this);
 	else 
 	{
@@ -138,7 +140,7 @@ ULONG CMyMath::Release(void)
 }
 
 //Implementation of IMyMath's Methods
-HRESULT CMyMath::SumOfTwoIntegers(int num1, int num2, int* pSum) {
+HRESULT CMyMath::SumSumOfTwoIntegers(int num1, int num2, int* pSum) {
 	*pSum = num1 + num2;
 	return(S_OK);
 }
@@ -146,6 +148,25 @@ HRESULT CMyMath::SumOfTwoIntegers(int num1, int num2, int* pSum) {
 HRESULT CMyMath::SubtractionOfTwoIntegers(int num1, int num2, int* pSub) {
 	*pSub = num1 - num2;
 	return(S_OK);
+}
+
+
+void ComErrorDesriptionString(HWND hwnd, HRESULT hr) {
+	//variables 
+	TCHAR* szErrorMsg = NULL;
+	TCHAR str[255];
+
+	if (FACILITY_WINDOWS == HRESULT_FACILITY(hr))
+		hr = HRESULT_CODE(hr);
+
+	if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&szErrorMsg, 0, NULL) != 0) {
+		swprintf_s(str, TEXT("%#x : %s"), hr, szErrorMsg);
+		LocalFree(szErrorMsg);
+	}
+	else
+		swprintf_s(str, TEXT("[Could not find description for error #  %#x.]\n"), hr);
+	MessageBox(hwnd, str, TEXT("Com Error"), MB_OK);
 }
 
 HRESULT CMyMath::InitInstance(void) {
@@ -163,14 +184,14 @@ HRESULT CMyMath::InitInstance(void) {
 			0x00,//Lang nutral
 			&pITypeLib);
 		if (FAILED(hr)) {
-			ComErrorDiscriptionString(NULL, hr);
+			ComErrorDesriptionString(NULL, hr);
 			return(hr);
 		}
 		
 		hr = pITypeLib->GetTypeInfoOfGuid(IID_IMyMath, &m_pITypeInfo);
 
 		if (FAILED(hr)) {
-			ComErrorDiscriptionString(NULL, hr);
+			ComErrorDesriptionString(NULL, hr);
 			pITypeLib->Release();
 			return(hr);
 		}
@@ -193,9 +214,9 @@ CMyMathClassFactory::~CMyMathClassFactory(void)
 
 //implementation of CMyMathClass factorys IClassFactory IUnkonow methods
 HRESULT CMyMathClassFactory::QueryInterface(REFIID riid, void** ppv) {
-	if (riif == IID_IUnknown)
+	if (riid == IID_IUnknown)
 		*ppv = static_cast<IClassFactory*>(this);
-	else if (rrid == IIDIClassFactory_IDispatch)
+	else if (riid == IID_IClassFactory)
 		*ppv = static_cast<IClassFactory*>(this);
 	else
 	{
@@ -209,19 +230,19 @@ HRESULT CMyMathClassFactory::QueryInterface(REFIID riid, void** ppv) {
 
 ULONG CMyMathClassFactory::AddRef(void)
 {
-	InterlockedIncrement(&m_CRef);
-	return(m_CRef);
+	InterlockedIncrement(&m_cRef);
+	return(m_cRef);
 }
 
 ULONG CMyMathClassFactory::Release(void)
 {
-	InterlockedDecrement(&m_CRef);
-	if (m_CRef == 0)
+	InterlockedDecrement(&m_cRef);
+	if (m_cRef == 0)
 	{
 		delete(this);
 		return 0;
 	}
-	return(m_CRef);
+	return(m_cRef);
 }
 
 //Implementation of CMyMathClassFactorys IClassFacto's methods
@@ -265,14 +286,14 @@ HRESULT CMyMath::GetTypeInfoCount(UINT* pCountTypeInfo) {
 
 HRESULT CMyMath::GetTypeInfo(UINT iTypeInfo, LCID lcid, ITypeInfo** ppITypeInfo) {
 	*ppITypeInfo = NULL;
-	if (ITypeInfo != 0)
+	if (iTypeInfo != 0)
 		return DISP_E_BADINDEX;
 	m_pITypeInfo->AddRef();
 	*ppITypeInfo = m_pITypeInfo;
 	return S_OK;
 }
 
-HRESULT CMyMath::GetIDsOfNames(REFIID riid, LPOSTER* rgszNames, UINT cNames, LCID lcid, DISPID* rgDispId) {
+HRESULT CMyMath::GetIDsOfNames(REFIID riid, LPOLESTR* rgszNames, UINT cNames, LCID lcid, DISPID* rgDispId) {
 	return DispGetIDsOfNames(m_pITypeInfo,rgszNames,cNames,rgDispId); //com helper function of Win32
 }
 
@@ -286,7 +307,7 @@ HRESULT CMyMath::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid , WORD wFlag
 }
 
 //implementation of exported funxtion from this DLL
-extern "C" HRESULT __stdcall DLLGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv) {
+extern "C" HRESULT __stdcall DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv) {
 	//variable decleration
 	CMyMathClassFactory* pCMyMathClassFactory = NULL;
 	HRESULT hr;
@@ -306,39 +327,64 @@ extern "C" HRESULT __stdcall DLLGetClassObject(REFCLSID rclsid, REFIID riid, voi
 	return hr;
 }
 
-extern "C" HRESULT __stdcall DLLCanUnloadNow(void) {
+extern "C" HRESULT __stdcall DllCanUnloadNow(void) {
 	if (glNumberOfActiveComponents == 0 && glNumberOfServerLocks == 0)
 		return S_OK;
 	else
 		return S_FALSE;
 }
 
-void ComErrorDesriptionString(HWND hwnd , HRESULT hr) {
-	//variables 
-	TCHAR* szErrorMsg = NULL;
-	TCHAR str[255];
-
-	if (FACILITY_WINDOWS == HRESULT_FACILITY(hr))
-		hr = HRESULT_CODE(hr);
-
-	if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, hr,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&szErrorMessage, 0, NULL) != 0) {
-		swprintf_s(str,TEXT("%#x : %s"),hr,szErrorMsg);
-		LocalFree(szErrorMsg);
-	}
-	else
-		swprintf_s(str, TEXT("[Could not find description for error #  %#x.]\n"), hr);
-	MessageBox(hwnd,str,TEXT("Com Error"),MB_OK);
-}
-
 //register DLL with com into system registry
-STDAPI DLLRegisterServer()
+STDAPI DllRegisterServer()
 {
-	//TODO : implemenattion pending 
+	HKEY hCLSDIDKey = NULL, hInProcSvrKey = NULL;
+	LONG lRet;
+	TCHAR szModulePath[MAX_PATH];
+	TCHAR szClassDiscription[] = TEXT("Automation com class");
+	TCHAR szThreadingModel[] = TEXT("Apartment");
+	__try {
+		lRet = RegCreateKeyEx(HKEY_CLASSES_ROOT , TEXT("CLSID\\{94248ECA-86B3-4A90-9DAB-E969BE8B62A8}"),0,NULL,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE|KEY_CREATE_SUB_KEY,NULL,&hCLSDIDKey,NULL);
+
+		if (ERROR_SUCCESS != lRet) {
+			return HRESULT_FROM_WIN32(lRet);
+		}
+
+		lRet = RegSetValueEx(hCLSDIDKey,NULL,0,REG_SZ,(const BYTE*)szClassDiscription,sizeof(szClassDiscription));
+		sizeof(szClassDiscription);
+
+		if(ERROR_SUCCESS!=lRet)
+			return HRESULT_FROM_WIN32(lRet);
+
+		lRet = RegCreateKeyEx(hCLSDIDKey, TEXT("InProcServer32"), 0, NULL,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,NULL,&hInProcSvrKey,NULL);
+
+		if (ERROR_SUCCESS != lRet)
+			return HRESULT_FROM_WIN32(lRet);
+
+		GetModuleFileName(ghModule,szModulePath,MAX_PATH);
+
+		lRet = RegSetValueEx(hInProcSvrKey,NULL,0,REG_SZ,(const BYTE*)szModulePath,sizeof(TCHAR)*(lstrlen(szModulePath)+1));
+
+		if (ERROR_SUCCESS != lRet)
+			return HRESULT_FROM_WIN32(lRet);
+
+		lRet = RegSetValueEx(hInProcSvrKey, TEXT("ThreadingModel"), 0, REG_SZ, (const BYTE*)szThreadingModel, sizeof(TCHAR) * (lstrlen(szThreadingModel) + 1));
+
+		if (ERROR_SUCCESS != lRet)
+			return HRESULT_FROM_WIN32(lRet);
+
+	}
+	__finally
+	{
+		if (NULL != hCLSDIDKey)
+			RegCloseKey(hCLSDIDKey);
+		if (NULL != hInProcSvrKey)
+			RegCloseKey(hInProcSvrKey);
+	}
+	return S_OK; 
 }
 
 //Unregister DLL from system library
-STDAPI DLLUnregisterServer() 
+STDAPI DllUnregisterServer() 
 {
 	RegDeleteKey(HKEY_CLASSES_ROOT,TEXT("CLSID\\{}\\InProcServer32"));
 	RegDeleteKey(HKEY_CLASSES_ROOT, TEXT("CLSID\\{}"));
