@@ -335,7 +335,7 @@ extern "C" HRESULT __stdcall DllCanUnloadNow(void) {
 }
 
 //register DLL with com into system registry
-STDAPI DllRegisterServer()
+extern "C" HRESULT __stdcall DllRegisterServer()
 {
 	HKEY hCLSDIDKey = NULL, hInProcSvrKey = NULL;
 	LONG lRet;
@@ -384,7 +384,7 @@ STDAPI DllRegisterServer()
 }
 
 //Unregister DLL from system library
-STDAPI DllUnregisterServer() 
+extern "C" HRESULT __stdcall DllUnregisterServer()
 {
 	RegDeleteKey(HKEY_CLASSES_ROOT,TEXT("CLSID\\{}\\InProcServer32"));
 	RegDeleteKey(HKEY_CLASSES_ROOT, TEXT("CLSID\\{}"));
