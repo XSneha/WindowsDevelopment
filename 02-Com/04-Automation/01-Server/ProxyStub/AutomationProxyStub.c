@@ -108,7 +108,7 @@ static const AutomationServerTypeLib_MIDL_PROC_FORMAT_STRING AutomationServerTyp
         0,
         {
 
-	/* Procedure SumOfTwoIntegers */
+	/* Procedure SumSumOfTwoIntegers */
 
 			0x33,		/* FC_AUTO_HANDLE */
 			0x6c,		/* Old Flags:  object, Oi2 */
@@ -228,7 +228,7 @@ static const AutomationServerTypeLib_MIDL_TYPE_FORMAT_STRING AutomationServerTyp
 
 
 /* Object interface: IMyMath, ver. 0.0,
-   GUID={0x6641FCB9,0x5D50,0x429E,{0x99,0x67,0xAA,0xD9,0x44,0xC0,0xF5,0xBD}} */
+   GUID={0x626F95E1,0x44B2,0x4FC5,{0x8F,0x8F,0xD1,0xDC,0x76,0x13,0xEA,0x18}} */
 
 #pragma code_seg(".orpc")
 static const unsigned short IMyMath_FormatStringOffsetTable[] =
@@ -273,7 +273,7 @@ CINTERFACE_PROXY_VTABLE(9) _IMyMathProxyVtbl =
     0 /* IDispatch::GetTypeInfo */ ,
     0 /* IDispatch::GetIDsOfNames */ ,
     0 /* IDispatch_Invoke_Proxy */ ,
-    (void *) (INT_PTR) -1 /* IMyMath::SumOfTwoIntegers */ ,
+    (void *) (INT_PTR) -1 /* IMyMath::SumSumOfTwoIntegers */ ,
     (void *) (INT_PTR) -1 /* IMyMath::SubtractionOfTwoIntegers */
 };
 

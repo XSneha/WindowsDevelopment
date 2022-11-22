@@ -95,12 +95,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			MessageBox(hwnd, TEXT("Coinitialize Failed"), TEXT("ERROR"), MB_OK);
 			DestroyWindow(hwnd);
 		}
+		MessageBox(hwnd, TEXT("CoInitialize Done"), TEXT("CoInitialize Done"), MB_OK);
 
 		hr = CoCreateInstance(CLSID_MyMath, NULL, CLSCTX_INPROC_SERVER, IID_IMyMath, (void**)&pIMath);
 		if (FAILED(hr)) {
 			MessageBox(hwnd, TEXT("Failed to get IMyMath Interface"), TEXT("ERROR"), MB_OK);
 			DestroyWindow(hwnd);
 		}
+		MessageBox(hwnd, TEXT("CoCreateInstance Done"), TEXT("CoCreateInstance Done"), MB_OK);
 
 		num1 = 175;
 		num2 = 125;

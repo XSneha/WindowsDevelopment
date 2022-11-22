@@ -102,30 +102,60 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			MessageBox(hwnd, TEXT("Coinitialize Failed"), TEXT("ERROR"), MB_OK);
 			DestroyWindow(hwnd);
 		}
+		MessageBox(hwnd, TEXT("Coinitialize Done"), TEXT("Debug"), MB_OK);
+
 
 		hr = CoCreateInstance(CLSID_MyMath, NULL, CLSCTX_INPROC_SERVER, IID_IDispatch, (void**)&pIDispatch);
 		if (FAILED(hr)) {
 			MessageBox(hwnd, TEXT("Failed to get IDispatch Interface"), TEXT("ERROR"), MB_OK);
 			DestroyWindow(hwnd);
 		}
+		MessageBox(hwnd, TEXT("CoCreateInstance Done"), TEXT("Debug"), MB_OK);
 
 		num1 = 275;
 		num2 = 225;
 		//pIMath->SumSumOfTwoIntegers(num1, num2, &sum);
 		//get id of SumOfTwoIntegers
+
+		//call SumOfTwoIntegers() by passing its ID to invoke
+		VariantInit(vArg);						//initialize varg with default value
+		vArg[0].vt = VT_INT;					//vt - variant type
+		vArg[0].intVal = num2;					//value of argument
+		vArg[1].vt = VT_INT;
+		vArg[1].intVal = num1;
+		params.rgvarg = vArg; 				//register varient arguments
+		params.cArgs = 2; 						// count of arguments in vArg assigned to rgvarg
+		params.rgdispidNamedArgs = NULL; 		//no named arguments
+		params.cNamedArgs = 0;
+		VariantInit(&vResult); 					//initialization of varient result
+
 		hr = pIDispatch->GetIDsOfNames(IID_NULL,
 			&szFunctionName1,//array base address
 			1,//count of elements in 2nd parameter
 			GetUserDefaultLCID(),//
 			&dispid);
+
 		if (FAILED(hr)) {
 			MessageBox(hwnd, TEXT("Get IDs of Names failed to give ids of SumOfTwoIntegers()"), TEXT("ERROR"), MB_OK);
 			pIDispatch->Release();
 			pIDispatch = NULL;
 			DestroyWindow(hwnd);
 		}
+
+		hr = pIDispatch->Invoke(dispid,
+			IID_NULL,
+			GetUserDefaultLCID(),
+			DISPATCH_METHOD,
+			&params,
+			&vResult,
+			NULL,
+			NULL);
+		sum = vResult.lVal;
+		wsprintf(str, TEXT("Sum of %d and %d is %d"), num1, num2, sum);
+		MessageBox(hwnd, str, TEXT("Sum"), MB_OK);
+
 		//call SumOfTwoIntegers() by passing its ID to invoke
-		VariantInit(vArg);						//initialize varg with default value
+		/*VariantInit(vArg);						//initialize varg with default value
 		vArg[0].vt = VT_INT;					//vt - variant type
 		vArg[0].intVal = num2;					//value of argument
 		vArg[1].vt = VT_INT;
@@ -146,7 +176,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		sum = vResult.lVal;
 		wsprintf(str, TEXT("Sum of %d and %d is %d"), num1, num2, sum);
 		MessageBox(hwnd, str, TEXT("Sum"), MB_OK);
-
+		*/
 		//pIMath->SubtractionOfTwoIntegers(num1, num2, &subtract);
 		//get id of SubtractionOfTwoIntegers
 		hr = pIDispatch->GetIDsOfNames(IID_NULL,

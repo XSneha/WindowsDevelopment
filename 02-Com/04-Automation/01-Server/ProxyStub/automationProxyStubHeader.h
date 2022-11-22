@@ -84,11 +84,11 @@ EXTERN_C const IID IID_IMyMath;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("6641FCB9-5D50-429E-9967-AAD944C0F5BD")
+    MIDL_INTERFACE("626F95E1-44B2-4FC5-8F8F-D1DC7613EA18")
     IMyMath : public IDispatch
     {
     public:
-        virtual HRESULT __stdcall SumOfTwoIntegers( 
+        virtual HRESULT __stdcall SumSumOfTwoIntegers( 
             /* [in] */ int __MIDL__IMyMath0000,
             /* [in] */ int __MIDL__IMyMath0001,
             /* [retval][out] */ int *__MIDL__IMyMath0002) = 0;
@@ -156,7 +156,7 @@ EXTERN_C const IID IID_IMyMath;
             /* [annotation][out] */ 
             _Out_opt_  UINT *puArgErr);
         
-        HRESULT ( __stdcall *SumOfTwoIntegers )( 
+        HRESULT ( __stdcall *SumSumOfTwoIntegers )( 
             IMyMath * This,
             /* [in] */ int __MIDL__IMyMath0000,
             /* [in] */ int __MIDL__IMyMath0001,
@@ -204,8 +204,8 @@ EXTERN_C const IID IID_IMyMath;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define IMyMath_SumOfTwoIntegers(This,__MIDL__IMyMath0000,__MIDL__IMyMath0001,__MIDL__IMyMath0002)	\
-    ( (This)->lpVtbl -> SumOfTwoIntegers(This,__MIDL__IMyMath0000,__MIDL__IMyMath0001,__MIDL__IMyMath0002) ) 
+#define IMyMath_SumSumOfTwoIntegers(This,__MIDL__IMyMath0000,__MIDL__IMyMath0001,__MIDL__IMyMath0002)	\
+    ( (This)->lpVtbl -> SumSumOfTwoIntegers(This,__MIDL__IMyMath0000,__MIDL__IMyMath0001,__MIDL__IMyMath0002) ) 
 
 #define IMyMath_SubtractionOfTwoIntegers(This,__MIDL__IMyMath0003,__MIDL__IMyMath0004,__MIDL__IMyMath0005)	\
     ( (This)->lpVtbl -> SubtractionOfTwoIntegers(This,__MIDL__IMyMath0003,__MIDL__IMyMath0004,__MIDL__IMyMath0005) ) 
@@ -235,7 +235,7 @@ EXTERN_C const CLSID CLSID_CMyMath;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("94248ECA-86B3-4A90-9DAB-E969BE8B62A8")
+class DECLSPEC_UUID("B487D653-A5B5-484D-9E1D-F09EC487560B")
 CMyMath;
 #endif
 #endif /* __AutomationServerTypeLib_LIBRARY_DEFINED__ */

@@ -1,0 +1,5 @@
+; This is Module Definition file
+LIBRARY MyMathTwo.dll
+DISCRIPTION 'copyright:XSneha'
+EXPORTS
+       makeCube

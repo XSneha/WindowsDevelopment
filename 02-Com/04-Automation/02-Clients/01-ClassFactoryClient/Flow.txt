@@ -1,0 +1,35 @@
+ClassFactoryClient
+
+Cliet 
+TEXT("CoInitialize Done")
+
+Server 
+1. DllGetClassObject 
+2. CMyMathClassFactory::QueryInterface
+CMyMathClassFactory::QueryInterface -> riid == IID_IClassFactory
+3. CMyMathClassFactory::CreateInstance
+	CMyMathClassFactory::CreateInstance
+4.CMyMath::InitInstance
+	CMyMath : In InitInstance
+	CMyMath : Geting TypeInfoOfGuid
+	CMyMath : GetTypeInfoOfGuid SUCCESSFUL
+5.CMyMath::QueryInterface
+	CMyMath : IN Query Interface
+	CMyMath : riid == IID_IMyMath
+6.CMyMath::AddRef
+	CMyMath : AddRef
+	CMyMath : InterlockedIncrement
+Repeat:
+	CMyMath : AddRef
+	CMyMath : InterlockedIncrement
+5.CMyMath::QueryInterface
+	CMyMath : IN Query Interface
+	CMyMath : riid == IID_IMyMath
+6.CMyMath::AddRef
+	CMyMath : AddRef
+	CMyMath : InterlockedIncrement
+
+Client : 
+CocreateInstance - done
+Result
+MessageBox(hwnd, str, TEXT("Sum"), MB_OK);

@@ -13,7 +13,7 @@
 class CMyMath :public IMyMath 
 {
 private:
-	long m_CRef;
+	long m_cRef;
 	ITypeInfo* m_pITypeInfo = NULL;
 
 public:
@@ -71,9 +71,11 @@ HMODULE ghModule = NULL;
 //global variable decleartions
 long glNumberOfActiveComponents = 0;	// number of active components
 long glNumberOfServerLocks = 0;			// number of locks on this DLL
-										// {}
-// {EA3D3E04-2F1B-4E54-8E8A-871BE06D067B}
-const GUID LIBID_AutomationServer = {0xea3d3e04, 0x2f1b, 0x4e54, 0x8e, 0x8a, 0x87, 0x1b, 0xe0, 0x6d, 0x6, 0x7b }; // TODO : change later  <uuid-libID_Automation-Server>
+				
+// new :{06741AC6-70CE-4E56-9EDA-7734222EB43B}
+// old : {EA3D3E04-2F1B-4E54-8E8A-871BE06D067B}
+//const GUID LIBID_AutomationServer = {0xea3d3e04, 0x2f1b, 0x4e54, 0x8e, 0x8a, 0x87, 0x1b, 0xe0, 0x6d, 0x6, 0x7b }; // TODO : change later  <uuid-libID_Automation-Server>
+const GUID LIBID_AutomationServer = { 0x6741ac6, 0x70ce, 0x4e56, 0x9e, 0xda, 0x77, 0x34, 0x22, 0x2e, 0xb4, 0x3b }; // TODO : change later  <uuid-libID_Automation-Server>
 
 //DLLMain
 BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID Reserved)
@@ -90,7 +92,7 @@ BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID Reserved)
 //Implemenation of CMyMath'c cosnstructor method
 CMyMath::CMyMath(void)
 {
-	m_CRef = 1; //hardcoded initialization to anticipate possible failure of QueryInterface()
+	m_cRef = 1; //hardcoded initialization to anticipate possible failure of QueryInterface()
 	InterlockedIncrement(&glNumberOfActiveComponents); //incrementing the global counter
 	m_pITypeInfo = NULL;
 }
@@ -107,14 +109,22 @@ CMyMath::~CMyMath(void)
 
 //Implementation of CMyMath's IUnknow's Method
 HRESULT CMyMath::QueryInterface(REFIID riid,void **ppv) {
-	if (riid == IID_IUnknown)
+	MessageBox(NULL, TEXT("CMyMath : IN Query Interface"), TEXT("DEBUG"), MB_OK);
+	if (riid == IID_IUnknown) {
+		MessageBox(NULL, TEXT("CMyMath : riid == IID_IUnknown"), TEXT("DEBUG"), MB_OK);
 		*ppv = static_cast<IMyMath*>(this);
-	else if (riid == IID_IDispatch)
+	}
+	else if (riid == IID_IDispatch) {
+		MessageBox(NULL, TEXT("CMyMath : riid == IID_IDispatch"), TEXT("DEBUG"), MB_OK);
 		*ppv = static_cast<IMyMath*>(this);
-	else if (riid == IID_IMyMath)
+	}
+	else if (riid == IID_IMyMath) {
+		MessageBox(NULL, TEXT("CMyMath : riid == IID_IMyMath"), TEXT("DEBUG"), MB_OK);
 		*ppv = static_cast<IMyMath*>(this);
+	}
 	else 
 	{
+		MessageBox(NULL, TEXT("CMyMath : *ppv = null"), TEXT("DEBUG"), MB_OK);
 		*ppv = NULL;
 		return (E_NOINTERFACE);
 	}
@@ -124,23 +134,27 @@ HRESULT CMyMath::QueryInterface(REFIID riid,void **ppv) {
 
 ULONG CMyMath::AddRef(void) 
 {
-	InterlockedIncrement(&m_CRef);
-	return(m_CRef);
+	MessageBox(NULL, TEXT("CMyMath : AddRef"), TEXT("DEBUG"), MB_OK);
+	InterlockedIncrement(&m_cRef);
+	MessageBox(NULL, TEXT("CMyMath : InterlockedIncrement"), TEXT("DEBUG"), MB_OK);
+
+	return(m_cRef);
 }
 
 ULONG CMyMath::Release(void)
 {
-	InterlockedDecrement(&m_CRef);
-	if (m_CRef == 0) 
+	InterlockedDecrement(&m_cRef);
+	if (m_cRef == 0) 
 	{
 		delete(this);
 		return 0;
 	}
-	return(m_CRef);
+	return(m_cRef);
 }
 
 //Implementation of IMyMath's Methods
 HRESULT CMyMath::SumSumOfTwoIntegers(int num1, int num2, int* pSum) {
+	MessageBox(NULL, TEXT("CMyMath::SumSumOfTwoIntegers"), TEXT("DEBUG"), MB_OK);
 	*pSum = num1 + num2;
 	return(S_OK);
 }
@@ -177,8 +191,12 @@ HRESULT CMyMath::InitInstance(void) {
 	HRESULT hr;
 	ITypeLib* pITypeLib = NULL;
 
+	MessageBox(NULL, TEXT("CMyMath : In InitInstance"), TEXT("DEBUG"), MB_OK);
+
 	//code
 	if (m_pITypeInfo == NULL) {
+		MessageBox(NULL, TEXT("CMyMath : m_pITypeInfo == NULL"), TEXT("DEBUG"), MB_OK);
+
 		hr = LoadRegTypeLib(LIBID_AutomationServer,
 			1,0,//major , minor version numbers
 			0x00,//Lang nutral
@@ -189,12 +207,14 @@ HRESULT CMyMath::InitInstance(void) {
 		}
 		
 		hr = pITypeLib->GetTypeInfoOfGuid(IID_IMyMath, &m_pITypeInfo);
-
+		MessageBox(NULL, TEXT("CMyMath : Geting TypeInfoOfGuid"), TEXT("DEBUG"), MB_OK);
 		if (FAILED(hr)) {
+			MessageBox(NULL, TEXT("CMyMath : GetTypeInfoOfGuid Failed"), TEXT("DEBUG"), MB_OK);
 			ComErrorDesriptionString(NULL, hr);
 			pITypeLib->Release();
 			return(hr);
 		}
+		MessageBox(NULL, TEXT("CMyMath : GetTypeInfoOfGuid SUCCESSFUL"), TEXT("DEBUG"), MB_OK);
 		pITypeLib->Release();
 	}
 	return (S_OK);
@@ -214,12 +234,17 @@ CMyMathClassFactory::~CMyMathClassFactory(void)
 
 //implementation of CMyMathClass factorys IClassFactory IUnkonow methods
 HRESULT CMyMathClassFactory::QueryInterface(REFIID riid, void** ppv) {
-	if (riid == IID_IUnknown)
+	if (riid == IID_IUnknown) {
+		MessageBox(NULL, TEXT("CMyMathClassFactory::QueryInterface -> riid == IID_IUnknown"), TEXT("DEBUG"), MB_OK);
 		*ppv = static_cast<IClassFactory*>(this);
-	else if (riid == IID_IClassFactory)
+	}
+	else if (riid == IID_IClassFactory) {
+		MessageBox(NULL, TEXT("CMyMathClassFactory::QueryInterface -> riid == IID_IClassFactory"), TEXT("DEBUG"), MB_OK);
 		*ppv = static_cast<IClassFactory*>(this);
+	}
 	else
 	{
+		MessageBox(NULL, TEXT("CMyMathClassFactory::QueryInterface -> *ppv==NULL"), TEXT("DEBUG"), MB_OK);
 		*ppv = NULL;
 		return (E_NOINTERFACE);
 	}
@@ -250,6 +275,8 @@ HRESULT CMyMathClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, vo
 	//variable declerations
 	CMyMath* pCMyMath = NULL;
 	HRESULT hr;
+
+	MessageBox(NULL, TEXT("CMyMathClassFactory::CreateInstance"), TEXT("DEBUG"), MB_OK);
 
 	if (pUnkOuter != NULL) {
 		return CLASS_E_NOAGGREGATION;
@@ -285,24 +312,30 @@ HRESULT CMyMath::GetTypeInfoCount(UINT* pCountTypeInfo) {
 }
 
 HRESULT CMyMath::GetTypeInfo(UINT iTypeInfo, LCID lcid, ITypeInfo** ppITypeInfo) {
+	MessageBox(NULL, TEXT("CMyMath::GetTypeInfo"), TEXT("DEBUG"), MB_OK);
 	*ppITypeInfo = NULL;
 	if (iTypeInfo != 0)
 		return DISP_E_BADINDEX;
+	MessageBox(NULL, TEXT("CMyMath::m_pITypeInfo->AddRef"), TEXT("DEBUG"), MB_OK);
 	m_pITypeInfo->AddRef();
 	*ppITypeInfo = m_pITypeInfo;
 	return S_OK;
 }
 
 HRESULT CMyMath::GetIDsOfNames(REFIID riid, LPOLESTR* rgszNames, UINT cNames, LCID lcid, DISPID* rgDispId) {
-	return DispGetIDsOfNames(m_pITypeInfo,rgszNames,cNames,rgDispId); //com helper function of Win32
+	MessageBox(NULL, TEXT("CMyMath::GetIDsOfNames "), TEXT("DEBUG"), MB_OK);
+	HRESULT hr; 
+	hr = DispGetIDsOfNames(m_pITypeInfo,rgszNames,cNames,rgDispId); //com helper function of Win32
+	ComErrorDesriptionString(NULL,hr);
+	return hr;
 }
 
 HRESULT CMyMath::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid , WORD wFlags, DISPPARAMS *pDispParams, VARIANT *pVarResult , EXCEPINFO *pExcepInfo , UINT *puArgErr) {
 	//variable declerations
 	HRESULT hr;
-
+	MessageBox(NULL, TEXT("CMyMath::Invoke"), TEXT("DEBUG"), MB_OK);
 	hr = DispInvoke(this,m_pITypeInfo,dispIdMember,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr);
-
+	ComErrorDesriptionString(NULL, hr);
 	return hr;
 }
 
@@ -311,6 +344,8 @@ extern "C" HRESULT __stdcall DllGetClassObject(REFCLSID rclsid, REFIID riid, voi
 	//variable decleration
 	CMyMathClassFactory* pCMyMathClassFactory = NULL;
 	HRESULT hr;
+
+	MessageBox(NULL,TEXT("In DLL get class object"),TEXT("Debug Message"),MB_OK);
 
 	if (rclsid != CLSID_MyMath)
 		return (CLASS_E_CLASSNOTAVAILABLE);
@@ -333,7 +368,7 @@ extern "C" HRESULT __stdcall DllCanUnloadNow(void) {
 	else
 		return S_FALSE;
 }
-
+/*
 //register DLL with com into system registry
 extern "C" HRESULT __stdcall DllRegisterServer()
 {
@@ -342,8 +377,9 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 	TCHAR szModulePath[MAX_PATH];
 	TCHAR szClassDiscription[] = TEXT("Automation com class");
 	TCHAR szThreadingModel[] = TEXT("Apartment");
+
 	__try {
-		lRet = RegCreateKeyEx(HKEY_CLASSES_ROOT , TEXT("CLSID\\{94248ECA-86B3-4A90-9DAB-E969BE8B62A8}"),0,NULL,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE|KEY_CREATE_SUB_KEY,NULL,&hCLSDIDKey,NULL);
+		lRet = RegCreateKeyEx(HKEY_CLASSES_ROOT , TEXT("CLSID\\{B487D653-A5B5-484D-9E1D-F09EC487560B}"),0,NULL,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE|KEY_CREATE_SUB_KEY,NULL,&hCLSDIDKey,NULL);
 
 		if (ERROR_SUCCESS != lRet) {
 			return HRESULT_FROM_WIN32(lRet);
@@ -386,7 +422,8 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 //Unregister DLL from system library
 extern "C" HRESULT __stdcall DllUnregisterServer()
 {
-	RegDeleteKey(HKEY_CLASSES_ROOT,TEXT("CLSID\\{}\\InProcServer32"));
-	RegDeleteKey(HKEY_CLASSES_ROOT, TEXT("CLSID\\{}"));
+	RegDeleteKey(HKEY_CLASSES_ROOT,TEXT("CLSID\\{B487D653-A5B5-484D-9E1D-F09EC487560B}\\InProcServer32"));
+	RegDeleteKey(HKEY_CLASSES_ROOT, TEXT("CLSID\\{B487D653-A5B5-484D-9E1D-F09EC487560B}"));
 	return S_OK;
 }
+*/

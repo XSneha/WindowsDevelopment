@@ -21,7 +21,7 @@ tlb : ProxyStub/AutomationServerTypeLib.tlb
 one 64 bit commond with Administrator permission(Run as administrator)
 check files with : dir automation*
 Cmd : regsvr32.exe AutomationProxyStub.dll 
-(register server 23 AutomationProxyStub.dll )
+(register server 23 AutomationProxyStub.dll)
 (message box will appear to register the entry, proceed with the registartion) 
 
  
